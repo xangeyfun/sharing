@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification - share.xangey.dev</title>
+    <link rel="icon" type="image/png" href="https://xangey.dev/static/Images/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="https://xangey.dev/static/Images/favicon.png" alt="" class="auth-logo">
+                <h1>Check Discord</h1>
+                <p>A verification code has been sent to your Discord. Enter it below.</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('admin.verify_2fa') }}" class="auth-form">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group">
+                    <label for="code">Verification Code</label>
+                    <input type="text" id="code" name="code" required autocomplete="one-time-code"
+                           maxlength="6" pattern="[A-Z0-9]{6}" placeholder="XXXXXX"
+                           autofocus class="code-input">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Verify</button>
+
+                <a href="{{ url_for('admin.login') }}" class="auth-link">Back to login</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

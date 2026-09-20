@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Activity{% endblock %}
+{% block topbar_title %}Activity{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <h2 class="panel-title">Recent Events</h2>
+    {% if activities %}
+    <ul class="activity-list">
+        {% for event in activities %}
+        <li class="activity-item">
+            {% if event.share_id %}
+            <a href="{{ url_for('admin.share_detail', share_id=event.share_id) }}" class="activity-share">{{ event.original_filename or 'deleted share' }}</a>
+            {% else %}
+            <span class="activity-share activity-share-deleted">unknown share</span>
+            {% endif %}
+            <span class="activity-type activity-type-{{ event.event_type }}">{{ event.event_type }}</span>
+            <span class="activity-detail">{{ event.event_detail or '' }}</span>
+            <span class="activity-time">{{ event.created_at[:16] }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">No activity recorded yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

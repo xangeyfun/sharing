@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ share.original_filename }}</title>
+    <link rel="icon" type="image/png" href="https://xangey.dev/static/Images/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
+</head>
+<body>
+    <main class="public-page">
+        <div class="public-card">
+            <header class="public-header">
+                <div class="public-brand">
+                    <img src="https://xangey.dev/static/Images/favicon.png" alt="" class="public-logo">
+                    <span>share.xangey.dev</span>
+                </div>
+            </header>
+
+            <div class="file-info">
+                <div class="file-heading">
+                    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" class="file-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <div>
+                        <h1 class="file-name">{{ share.original_filename }}</h1>
+                        <p class="file-size">
+                            {% if share.file_size > 1073741824 %}
+                                {{ "%.1f"|format(share.file_size / 1073741824) }} GB
+                            {% elif share.file_size > 1048576 %}
+                                {{ "%.1f"|format(share.file_size / 1048576) }} MB
+                            {% elif share.file_size > 1024 %}
+                                {{ "%.1f"|format(share.file_size / 1024) }} KB
+                            {% else %}
+                                {{ share.file_size }} B
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <dl class="file-meta">
+                    <div class="meta-row">
+                        <dt>Available until</dt>
+                        <dd>{{ expires_at.strftime('%Y-%m-%d %H:%M') }} UTC</dd>
+                    </div>
+                    {% if remaining is not none %}
+                    <div class="meta-row">
+                        <dt>Remaining downloads</dt>
+                        <dd>{{ remaining }}</dd>
+                    </div>
+                    {% endif %}
+                    {% if remaining_views is not none %}
+                    <div class="meta-row">
+                        <dt>Views left</dt>
+                        <dd>{{ remaining_views }}</dd>
+                    </div>
+                    {% endif %}
+                </dl>
+
+                {% if preview_type %}
+                <div class="preview">
+                    <p class="preview-label">Preview</p>
+                    {% if preview_type == 'image' %}
+                        <img src="{{ url_for('share.preview_share', code=share.access_code) }}" alt="{{ share.original_filename }}" loading="lazy" decoding="async">
+                    {% elif preview_type == 'video' %}
+                        <video controls playsinline preload="metadata">
+                            <source src="{{ url_for('share.preview_share', code=share.access_code) }}">
+                        </video>
+                    {% elif preview_type == 'audio' %}
+                        <audio controls preload="metadata">
+                            <source src="{{ url_for('share.preview_share', code=share.access_code) }}">
+                        </audio>
+                    {% elif preview_type == 'pdf' %}
+                        <iframe class="pdf-frame" src="{{ url_for('share.preview_share', code=share.access_code) }}" title="PDF preview"></iframe>
+                    {% elif preview_type == 'text' %}
+                        <pre class="text-preview">{{ text_preview }}</pre>
+                        {% if text_truncated %}
+                            <p class="preview-note">Preview cut off at 64 KB. Download to view the full file.</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <a href="{{ url_for('share.download_share', code=share.access_code) }}" class="download-btn">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download
+                </a>
+            </div>
+
+            <footer class="public-footer">Hosted by xangey.dev</footer>
+        </div>
+    </main>
+</body>
+</html>

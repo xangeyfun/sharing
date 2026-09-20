@@ -1,0 +1,20 @@
+[Unit]
+Description=share.xangey.dev file sharing
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/srv/share
+EnvironmentFile=/srv/share/.env
+ExecStart=/srv/share/.venv/bin/gunicorn -c gunicorn.conf.py wsgi:app
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/share/data
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Shares{% endblock %}
+{% block topbar_title %}Shares{% endblock %}
+{% block topbar_actions %}
+<a href="{{ url_for('admin.create_share_view') }}" class="btn btn-primary btn-sm">New Share</a>
+{% endblock %}
+
+{% block content %}
+<div class="filters-bar">
+    <form method="GET" action="{{ url_for('admin.shares_list') }}" class="filters-form">
+        <div class="filter-group">
+            <input type="text" name="search" value="{{ search }}" placeholder="Search filename or code..." class="filter-search">
+        </div>
+        <div class="filter-group">
+            <select name="status" class="filter-select">
+                <option value="">All Status</option>
+                <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+                <option value="expired" {% if status == 'expired' %}selected{% endif %}>Expired</option>
+                <option value="exhausted" {% if status == 'exhausted' %}selected{% endif %}>Exhausted</option>
+                <option value="disabled" {% if status == 'disabled' %}selected{% endif %}>Disabled</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+    </form>
+</div>
+
+{% if shares %}
+<div class="table-wrap">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th><a href="{{ url_for('admin.shares_list', sort='original_filename', dir='ASC' if sort_by == 'original_filename' and sort_dir == 'DESC' else 'DESC', status=status, search=search) }}">Filename</a></th>
+                <th>Code</th>
+                <th><a href="{{ url_for('admin.shares_list', sort='created_at', dir='ASC' if sort_by == 'created_at' and sort_dir == 'DESC' else 'DESC', status=status, search=search) }}">Created</a></th>
+                <th><a href="{{ url_for('admin.shares_list', sort='expires_at', dir='ASC' if sort_by == 'expires_at' and sort_dir == 'DESC' else 'DESC', status=status, search=search) }}">Expires</a></th>
+                <th><a href="{{ url_for('admin.shares_list', sort='download_count', dir='ASC' if sort_by == 'download_count' and sort_dir == 'DESC' else 'DESC', status=status, search=search) }}">Downloads</a></th>
+                <th><a href="{{ url_for('admin.shares_list', sort='view_count', dir='ASC' if sort_by == 'view_count' and sort_dir == 'DESC' else 'DESC', status=status, search=search) }}">Views</a></th>
+                <th><a href="{{ url_for('admin.shares_list', sort='file_size', dir='ASC' if sort_by == 'file_size' and sort_dir == 'DESC' else 'DESC', status=status, search=search) }}">Size</a></th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for share in shares %}
+            <tr class="clickable-row" data-href="{{ url_for('admin.share_detail', share_id=share.id) }}">
+                <td class="filename-cell">{{ share.original_filename }}</td>
+                <td><code class="code-badge">{{ share.access_code }}</code></td>
+                <td>{{ share.created_at[:10] }}</td>
+                <td>{{ share.expires_at[:10] }}</td>
+                <td>
+                    {% if share.download_limit %}
+                        {{ share.download_count }}/{{ share.download_limit }}
+                    {% else %}
+                        {{ share.download_count }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if share.view_limit %}
+                        {{ share.view_count }}/{{ share.view_limit }}
+                    {% else %}
+                        {{ share.view_count }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if share.file_size > 1073741824 %}
+                        {{ "%.1f"|format(share.file_size / 1073741824) }} GB
+                    {% elif share.file_size > 1048576 %}
+                        {{ "%.1f"|format(share.file_size / 1048576) }} MB
+                    {% elif share.file_size > 1024 %}
+                        {{ "%.1f"|format(share.file_size / 1024) }} KB
+                    {% else %}
+                        {{ share.file_size }} B
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="status-badge status-{{ share.status }}">{{ share.status }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="{{ url_for('admin.shares_list', page=page-1, status=status, search=search, sort=sort_by, dir=sort_dir) }}" class="btn btn-secondary btn-sm">Previous</a>
+    {% endif %}
+    <span class="page-info">Page {{ page }} of {{ total_pages }} ({{ total }} shares)</span>
+    {% if page < total_pages %}
+        <a href="{{ url_for('admin.shares_list', page=page+1, status=status, search=search, sort=sort_by, dir=sort_dir) }}" class="btn btn-secondary btn-sm">Next</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+    <p>No shares found.</p>
+    <a href="{{ url_for('admin.create_share_view') }}" class="btn btn-primary">Create your first share</a>
+</div>
+{% endif %}
+{% endblock %}

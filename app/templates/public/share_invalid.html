@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share unavailable</title>
+    <link rel="icon" type="image/png" href="https://xangey.dev/static/Images/favicon.png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
+</head>
+<body>
+    <main class="public-page">
+        <div class="public-card">
+            <header class="public-header">
+                <div class="public-brand">
+                    <img src="https://xangey.dev/static/Images/favicon.png" alt="" class="public-logo">
+                    <span>share.xangey.dev</span>
+                </div>
+            </header>
+
+            <div class="invalid-state">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" class="invalid-icon"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                <h1>Share unavailable</h1>
+                <p>This link is no longer active. The share may have expired, reached its download limit, or been removed by the owner.</p>
+            </div>
+
+            <footer class="public-footer">Hosted by xangey.dev</footer>
+        </div>
+    </main>
+</body>
+</html>

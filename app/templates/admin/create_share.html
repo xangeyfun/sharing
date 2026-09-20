@@ -1,0 +1,65 @@
+{% extends "admin/base.html" %}
+
+{% block title %}New Share{% endblock %}
+{% block topbar_title %}New Share{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <form method="POST" action="{{ url_for('admin.create_share_view') }}" enctype="multipart/form-data" class="form-stack">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group">
+            <label for="file">File</label>
+            <div class="file-drop" id="file-drop">
+                <input type="file" id="file" name="file" required>
+                <div class="file-drop-inner" id="file-drop-inner">
+                    <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <p>Choose a file or drag it here</p>
+                    <p class="file-name" id="file-name"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="custom_code">Custom code <span class="optional">(optional)</span></label>
+                <input type="text" id="custom_code" name="custom_code"
+                       placeholder="Leave empty for a random code"
+                       pattern="[A-Za-z0-9_-]{4,32}">
+                <p class="hint">Letters, numbers, hyphens and underscores. 4 to 32 characters.</p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="expires_days">Expires in</label>
+                <div class="expiry-grid">
+                    <input type="number" id="expires_days" name="expires_days" min="0" max="365" placeholder="Days">
+                    <input type="number" id="expires_hours" name="expires_hours" min="0" max="23" placeholder="Hours">
+                </div>
+                <p class="hint">Defaults to 7 days if left blank.</p>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="download_limit">Max downloads <span class="optional">(optional)</span></label>
+                <input type="number" id="download_limit" name="download_limit" min="1" max="1000000" placeholder="Leave empty for unlimited">
+                <p class="hint">Number of file downloads allowed before the share deactivates.</p>
+            </div>
+            <div class="form-group">
+                <label for="view_limit">Max views <span class="optional">(optional)</span></label>
+                <input type="number" id="view_limit" name="view_limit" min="1" max="1000000" placeholder="Leave empty for unlimited">
+                <p class="hint">Number of times the share page can be viewed before it deactivates.</p>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                Upload and Create Share
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
